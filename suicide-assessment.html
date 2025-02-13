@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ผลการคัดกรองการฆ่าตัวตาย</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ธีมพื้นหลังดวงดาว */
+    body {
+      font-family: 'Prompt', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: #000;
+      background-image: url('https://www.w3schools.com/w3images/stars.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+      background-blend-mode: overlay;
+      animation: gradientShift 40s ease-in-out infinite alternate;
+      filter: blur(1px);
+      z-index: -1;
+    }
+
+    .star-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      background-color: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% {
+        transform: scale(0.7);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+      }
+      50% {
+        background: radial-gradient(circle at 48% 32%, rgba(15, 10, 70, 1) 10%, rgba(50, 30, 170, 1) 60%, rgba(0, 200, 255, 0.7) 100%);
+      }
+      100% {
+        background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+      }
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+      padding: 30px;
+      box-sizing: border-box;
+      max-height: 80vh;
+      overflow-y: auto;
+      margin: 20px auto;
+    }
+
+    /* ปรับขนาดสำหรับมือถือ */
+    @media (max-width: 480px) {
+      .container {
+        width: 95%;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+
+      .question {
+        font-size: 1rem;
+      }
+
+      label {
+        font-size: 0.95rem;
+      }
+    }
+
+    h1 {
+      color: #2fbeea;
+      font-size: 2.4em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .question-box {
+      background-color: rgba(240, 244, 248, 1);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .question {
+      font-size: 1.2rem;
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #ffa1d0;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #f694c2;
+      transform: scale(1.1);
+    }
+
+    .alert-message {
+  position: fixed;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 500px; /* ปรับขนาดกล่องแจ้งเตือน */
+  color: white;
+  padding: 20px 30px; /* ปรับระยะห่างของข้อความในกล่อง */
+  border-radius: 20px;
+  font-size: 1.4rem; /* ปรับขนาดตัวอักษร */
+  font-weight: bold; /* เพิ่มความหนาของตัวอักษร */
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transition: top 0.5s ease;
+  z-index: 1000;
+}
+
+/* กรณีข้อความ error */
+.alert-message-error {
+  background-color: #fbe4e6;
+  color: #6a1a21;
+}
+
+/* กรณีข้อความ sending */
+.alert-message-sending {
+  background-color: #d88ac7;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+    .alert-message-error {
+      background-color: #fbe4e6;
+      color: #6a1a21;
+    }
+
+    .alert-message-sending {
+      background-color: #d88ac7;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #2456d3;
+      color: white;
+      border: none;
+      font-size: 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .music-toggle:hover {
+      background-color: #2b5dc9;
+      transform: translateY(-5px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stars"></div>
+  <div class="star-container"></div>
+  <audio id="background-music" loop>
+    <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <div class="container">
+    <h1>แบบประเมินการฆ่าตัวตาย (8Q)</h1>
+    <!-- คำถามทั้งหมด -->
+     <div class="question-box">
+     <p class="question">1. ช่วง 1 เดือนที่ผ่านมา คิดอยากตาย หรือคิดว่าตายไปจะดีกว่า</p>
+     <label><input type="radio" name="question1" value="0" required> ไม่มี</label>
+     <label><input type="radio" name="question1" value="1"> มี</label>
+   </div>
+    <div class="question-box">
+      <p class="question">2. ช่วง 1 เดือนที่ผ่านมา อยากทำร้ายตัวเอง หรือทำให้ตัวเองบาดเจ็บ</p>
+      <label><input type="radio" name="question2" value="0" required> ไม่มี</label>
+      <label><input type="radio" name="question2" value="2"> มี</label>
+    </div>
+    <div class="question-box">
+      <p class="question">3. ช่วง 1 เดือนที่ผ่านมา คิดเกี่ยวกับการฆ่าตัวตาย</p>
+      <label><input type="radio" name="question3" value="0" required> ไม่มี</label>
+      <label><input type="radio" name="question3" value="6"> มี</label>
+      <p class="question">ถ้าตอบว่าคิดเกี่ยวกับการฆ่าตัวตาย ให้ถามต่อ ท่านสามารถควบคุมความอยากฆ่าตัวตายที่ท่านคิดอยู่นั้นได้หรือไม่ หรือบอกได้ไหมว่าคงจะไม่ทำตามความคิดนั้นในขณะนี้ได้</p>
+      <label><input type="radio" name="question3_control" value="0" required> ไม่ได้</label>
+      <label><input type="radio" name="question3_control" value="8"> ได้</label>
+    </div>
+    <div class="question-box">
+      <p class="question">4. ช่วง 1 เดือนที่ผ่านมา มีแผนการที่จะฆ่าตัวตาย</p>
+      <label><input type="radio" name="question4" value="0" required> ไม่มี</label>
+      <label><input type="radio" name="question4" value="8"> มี</label>
+    </div>
+    <div class="question-box">
+      <p class="question">5. ช่วง 1 เดือนที่ผ่านมา ได้เตรียมการที่จะทำร้ายตนเอง หรือเตรียมการจะฆ่าตัวตาย โดยตั้งใจว่าจะให้ตายจริงๆ</p>
+      <label><input type="radio" name="question5" value="0" required> ไม่มี</label>
+      <label><input type="radio" name="question5" value="9"> มี</label>
+    </div>
+    <div class="question-box">
+      <p class="question">6. ช่วง 1 เดือนที่ผ่านมา ได้ทำให้ตนเองบาดเจ็บ แต่ไม่ตั้งใจที่จะทำให้เสียชีวิต</p>
+      <label><input type="radio" name="question6" value="0" required> ไม่มี</label>
+      <label><input type="radio" name="question6" value="4"> มี</label>
+    </div>
+    <div class="question-box">
+      <p class="question">7. ช่วง 1 เดือนที่ผ่านมา ได้พยายามฆ่าตัวตาย โดยคาดหวัง/ตั้งใจที่จะให้ตาย</p>
+      <label><input type="radio" name="question7" value="0" required> ไม่มี</label>
+      <label><input type="radio" name="question7" value="10"> มี</label>
+    </div>
+    <div class="question-box">
+      <p class="question">8. ตลอดชีวิตที่ผ่านมา ท่านเคยพยายามฆ่าตัวตาย</p>
+      <label><input type="radio" name="question8" value="0" required> ไม่มี</label>
+      <label><input type="radio" name="question8" value="4"> มี</label>
+    </div>
+ 
+    <!-- Add other questions similarly -->
+    <button type="button" onclick="submitForm()">ส่งคำตอบ</button>
+  </div>
+
+  <button class="music-toggle">เปิดเสียง</button>
+
+  <script>
+    // สร้างดวงดาวแบบสุ่ม
+    function createStars() {
+      const starContainer = document.querySelector('.star-container');
+      const numberOfStars = 100;
+      for (let i = 0; i < numberOfStars; i++) {
+        let star = document.createElement('div');
+        star.classList.add('star');
+        let size = Math.random() * 3; 
+        let duration = Math.random() * 10 + 5;
+
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${Math.random() * 100}vw`;
+        star.style.top = `${Math.random() * 100}vh`;
+        star.style.animationDuration = `${duration}s`;
+
+        starContainer.appendChild(star);
+      }
+    }
+
+    window.onload = function() {
+      const audioElement = document.getElementById('background-music');
+      createStars();
+
+      const musicToggle = document.querySelector('.music-toggle');
+      musicToggle.textContent = "เปิดเสียง";
+
+      musicToggle.addEventListener('click', function() {
+        if (audioElement.paused) {
+          audioElement.play();
+          musicToggle.textContent = "ปิดเสียง";
+        } else {
+          audioElement.pause();
+          musicToggle.textContent = "เปิดเสียง";
+        }
+      });
+    };
+
+    function submitForm() {
+      let formAnswers = {};
+      const questions = document.querySelectorAll('.question-box');
+      let totalScore = 0;
+
+      questions.forEach((question, index) => {
+        let answer = question.querySelector('input[type="radio"]:checked');
+        if (answer) {
+          formAnswers[`question${index + 1}`] = answer.value;
+          totalScore += parseInt(answer.value);
+        }
+      });
+
+      let message = '';
+      let allAnswered = true;
+
+      for (let i = 1; i <= questions.length; i++) {
+        if (!formAnswers[`question${i}`]) {
+          allAnswered = false;
+          break;
+        }
+      }
+
+      if (!allAnswered) {
+    showAlert("กรุณาตอบทุกคำถาม", "error");
+  } else {
+    // คำนวณข้อความตามคะแนน
+    if (totalScore === 0) {
+      message = `คุณไม่มีแนวโน้มจะฆ่าตัวตายในปัจจุบัน (คะแนน: ${totalScore})`;
+    } else if (totalScore >= 1 && totalScore <= 8) {
+      message = `คุณมีแนวโน้มจะฆ่าตัวตายในปัจจุบันในระดับน้อย (คะแนน: ${totalScore})`;
+    } else if (totalScore >= 9 && totalScore <= 16) {
+      message = `คุณมีแนวโน้มจะฆ่าตัวตายในปัจจุบันในระดับปานกลาง (คะแนน: ${totalScore})`;
+    } else if (totalScore >= 17) {
+      message = `คุณมีแนวโน้มจะฆ่าตัวตายในปัจจุบันในระดับรุนแรง (คะแนน: ${totalScore})`;
+    }
+
+        showAlert(message, "sending");
+        setTimeout(redirectToNewPage, 2000);
+      }
+    }
+
+    function showAlert(message, type) {
+      const alertMessage = document.createElement('div');
+      alertMessage.classList.add('alert-message', `alert-message-${type}`);
+      alertMessage.innerHTML = message;
+      document.body.appendChild(alertMessage);
+
+      setTimeout(function() {
+        alertMessage.style.top = '20px';
+      }, 10);
+
+      setTimeout(function() {
+        alertMessage.style.top = '-100px';
+      }, 3000);
+    }
+
+    function redirectToNewPage() {
+      window.location.href = "result.html";  // Change to your target URL
+    }
+  </script>
+</body>
+</html>

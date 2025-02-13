@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ผลการประเมินโรคซึมเศร้า</title>
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: black;
+      overflow: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+      z-index: -1;
+    }
+
+    .star {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      animation: twinkle 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #2b5dc9;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .music-toggle:hover {
+      background-color: #1e4baa;
+      transform: translateY(-5px);
+    }
+
+    .music-toggle img {
+      margin-right: 10px;
+      width: 20px;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      padding: 40px;
+      box-sizing: border-box;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    h1 {
+      color: #2fbeea;
+      font-size: 2.4em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .question-box {
+      background-color: rgba(240, 244, 248, 1);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+    }
+
+    .question-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .question {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #ed7bb4;
+      margin-bottom: 10px;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .question p {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .next-button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #2b5dc9;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .next-button:hover {
+      background-color: #1e4baa;
+      transform: translateY(-5px);
+    }
+
+    @media (min-width: 1024px) {
+      h1 {
+        font-size: 2.8em;
+      }
+      .container {
+        width: 70%;
+        padding: 40px;
+      }
+      button {
+        font-size: 1.2rem;
+        padding: 12px 24px;
+      }
+      .music-toggle {
+        font-size: 18px;
+        padding: 15px 25px;
+      }
+    }
+
+    @media (max-width: 1024px) and (min-width: 768px) {
+      h1 {
+        font-size: 2.4em;
+      }
+      .container {
+        width: 80%;
+        padding: 35px;
+      }
+      button {
+        font-size: 1.1rem;
+        padding: 10px 20px;
+      }
+      .music-toggle {
+        font-size: 16px;
+        padding: 12px 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2em;
+        margin-bottom: 20px;
+      }
+      .container {
+        width: 90%;
+        padding: 20px;
+      }
+      button {
+        font-size: 1rem;
+        padding: 10px 20px;
+      }
+      .music-toggle {
+        font-size: 16px;
+        padding: 12px 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+      }
+      .container {
+        width: 90%;
+        padding: 15px;
+      }
+      button {
+        font-size: 1rem;
+        padding: 8px 16px;
+      }
+      .music-toggle {
+        font-size: 14px;
+        padding: 10px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div> <!-- ฟื้นคืนพื้นหลัง -->
+  
+  <button class="music-toggle" id="musicToggle">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/music.png" alt="music icon">
+    <span id="musicText">เปิดเพลง</span>
+  </button>
+
+  <audio id="background-music" loop>
+    <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
+  </audio>
+
+  <!-- รูปภาพถูกลบออกจากที่นี่ -->
+
+  <div class="container">
+    <h1>ขอบคุณที่ร่วมตอบแบบประเมิน</h1>
+    <p id="description">หากคุณต้องการความช่วยเหลือ โปรดติดต่อ...</p>
+    <div class="question-box">
+      <p class="question">สายด่วน 1323</p>
+      <p class="question">เบอร์นี้สำหรับพูดคุยปรึกษา ผู้ที่ให้คำปรึกษาส่วนใหญ่เป็นนักจิตวิทยา นักสังคมสงเคราะห์ พยาบาลวิชาชีพ</p>
+    </div>
+    <div class="question-box">
+      <p class="question">081-932-0000</p>
+      <p class="question">Depress we care โรงพยาบาลตำรวจ</p>
+    </div>
+    <div class="question-box">
+      <p class="question">02-713-6793</p>
+      <p class="question">สมาคมสะมาริตันส์แห่งประเทศไทย ทุกวัน ตั้งแต่เวลา 12.00-22.00 น.</p>
+    </div>
+    <div class="question-box">
+      <p class="question">075 673 122</p>
+      <p class="question">ศูนย์ Smile and smart center อาคารไทยบุรี ชั้น 1 มหาวิทยาลัยวลัยลักษณ์</p>
+    </div>
+    <div class="question-box">
+      <p class="question">066 113 1593</p>
+      <p class="question">คลินิกรักษ์ใจศูนย์การแพทย์วลัยลักษณ์</p>
+    </div>
+
+    <button class="next-button" id="nextButton">หน้าถัดไป</button>
+  </div>
+
+  <script>
+    const music = document.getElementById("background-music");
+    const musicToggle = document.getElementById("musicToggle");
+    const musicText = document.getElementById("musicText");
+
+    function toggleMusic() {
+      if (music.paused) {
+        music.play().then(() => {
+          musicText.textContent = " ปิดเพลง";
+          localStorage.setItem("musicState", "playing");
+        }).catch(() => {
+          alert("ไม่สามารถเล่นเพลงได้ ต้องคลิกเพื่อเปิดเสียง");
+        });
+      } else {
+        music.pause();
+        musicText.textContent = " เปิดเพลง";
+        localStorage.setItem("musicState", "paused");
+      }
+    }
+
+    musicToggle.addEventListener("click", toggleMusic);
+
+    window.onload = function () {
+      createStars();
+      if (localStorage.getItem("musicState") === "playing") {
+        music.play();
+        musicText.textContent = " ปิดเพลง";
+      }
+    };
+
+    function createStars() {
+      const starContainer = document.querySelector('.stars');
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        star.style.width = star.style.height = `${Math.random() * 3 + 1}px`;
+        star.style.left = `${Math.random() * window.innerWidth}px`;
+        star.style.top = `${Math.random() * window.innerHeight}px`;
+        star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        starContainer.appendChild(star);
+      }
+    }
+
+    // เพิ่มฟังก์ชันสำหรับปุ่ม "หน้าถัดไป"
+    document.getElementById("nextButton").addEventListener("click", function () {
+      // เปลี่ยนไปยังหน้าถัดไป
+      window.location.href = "สุ่มการ์ด.html"; // ใส่ลิงก์ที่ต้องการไป
+    });
+  </script>
+</body>
+</html>

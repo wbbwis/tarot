@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สวัสดี</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Prompt', sans-serif;
+      font-weight: 300; /* ลดความหนาของตัวอักษร */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+      overflow: hidden;
+      color: white;
+      position: relative;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .star {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    h1, h2 {
+      font-size: 6vw; /* ขนาดที่ปรับให้เหมาะสมตามขนาดหน้าจอ */
+      color: #ffff58;
+      font-weight: 300; /* ลดความหนาของ h1 */
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
+      z-index: 2;
+      opacity: 1;
+      transition: opacity 1s ease-out;
+    }
+
+    h2 {
+      font-size: 4vw; /* ขนาดที่เหมาะสมสำหรับข้อความที่สอง */
+      color: #ffff58;
+      font-weight: 300;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 2s ease-out;
+    }
+
+    /* ปรับขนาดสำหรับอุปกรณ์มือถือ */
+    @media (max-width: 768px) {
+      h1, h2 {
+        font-size: 8vw; /* ปรับขนาดให้ใหญ่ขึ้นบนมือถือ */
+      }
+    }
+
+    /* ปรับขนาดสำหรับแท็บเล็ต */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      h1, h2 {
+        font-size: 5vw; /* ขนาดพอดีกับแท็บเล็ต */
+      }
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background-color: #d88ac7;
+      color: white;
+      border: none;
+      font-size: 18px;
+      border-radius: 25px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .music-toggle:hover {
+      background-color: #c17edc;
+      transform: translateY(-5px);
+    }
+
+    .music-toggle img {
+      margin-right: 10px;
+      width: 20px;
+    }
+
+    .music-toggle.off {
+      background-color: #2b5dc9;
+    }
+
+    .music-toggle.on {
+      background-color: #2456d3;
+    }
+
+    .background-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 90vw; /* ป้องกันไม่ให้รูปใหญ่เกินหน้าจอ */
+      max-height: 80vh; /* ป้องกันไม่ให้รูปสูงเกินไป */
+      width: auto;
+      height: auto;
+      z-index: 1;
+    }
+
+    /* ปรับขนาดสำหรับอุปกรณ์มือถือ */
+    @media (max-width: 768px) {
+      .background-image {
+        max-width: 80vw; /* ปรับขนาดให้เล็กลงบนมือถือ */
+        max-height: 60vh;
+      }
+    }
+
+    /* ปรับขนาดสำหรับแท็บเล็ต */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .background-image {
+        max-width: 85vw;
+        max-height: 75vh;
+      }
+    }
+
+    .fade-out {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black; /* พื้นหลังเป็นสีดำ */
+      opacity: 0;
+      transition: opacity 2s ease-out; /* จาง 2 วินาที */
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- เพิ่มภาพพื้นหลัง -->
+  <img src="images/S__15745029-removebg-preview.png" alt="Starry Night" class="background-image">
+
+  <div class="stars" id="stars-container"></div>
+  <div class="fade-out" id="fadeOut"></div> <!-- div สำหรับครอบทั้งหน้า -->
+  <h1 id="greeting">กำลังโหลด...</h1>
+  <h2 id="introText"></h2> <!-- เพิ่มข้อความยินดีที่ได้รู้จัก -->
+
+  <button class="music-toggle off" id="musicToggle" onclick="toggleMusic()">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/music.png" alt="music icon" id="musicIcon">
+    <span id="musicText"> เปิดเพลง</span>
+  </button>
+
+  <audio id="background-music" loop>
+    <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const music = document.getElementById("background-music");
+    const musicToggle = document.getElementById("musicToggle");
+    const musicText = document.getElementById("musicText");
+
+    function toggleMusic() {
+      if (music.paused) {
+        music.play().then(() => {
+          musicText.textContent = " ปิดเพลง";
+          musicToggle.classList.add('on');
+          musicToggle.classList.remove('off');
+          localStorage.setItem("musicState", "playing");
+        }).catch((error) => {
+          console.log("Error playing music:", error);
+          alert("ไม่สามารถเล่นเพลงได้อัตโนมัติ ต้องคลิกเพื่อเปิดเสียง");
+        });
+      } else {
+        music.pause();
+        musicText.textContent = " เปิดเพลง";
+        musicToggle.classList.add('off');
+        musicToggle.classList.remove('on');
+        localStorage.setItem("musicState", "paused");
+      }
+    }
+
+    function createStars() {
+      const container = document.getElementById('stars-container');
+      const numStars = 100;
+
+      for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+
+        const size = Math.random() * 3 + 1;
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        const duration = Math.random() * 3 + 2;
+
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${x}px`;
+        star.style.top = `${y}px`;
+        star.style.animationDuration = `${duration}s`;
+
+        container.appendChild(star);
+      }
+    }
+
+    window.onload = function () {
+      createStars();
+
+      const name = localStorage.getItem('userName');
+      const greeting = document.getElementById('greeting');
+      greeting.textContent = name ? `สวัสดี คุณ ${name}` : "ยินดีต้อนรับ";
+
+      // รอ 3 วินาที แล้วทำให้ "สวัสดี" หายไป
+      setTimeout(function () {
+        greeting.style.opacity = 0; // ทำให้ "สวัสดี" หายไป
+        const introText = document.getElementById('introText');
+        setTimeout(function () {
+          introText.textContent = "ยินดีที่ได้รู้จัก";
+          introText.style.opacity = 1; // ค่อยๆ แสดงข้อความ "ยินดีที่ได้รู้จัก"
+        }, 1000); // รอ 1 วินาที หลังจาก "สวัสดี" หายไป
+
+      }, 3000); // 3000 milliseconds = 3 seconds
+
+      const musicState = localStorage.getItem("musicState");
+      if (musicState === "playing") {
+        music.play();
+        musicText.textContent = " ปิดเพลง";
+        musicToggle.classList.add('on');
+        musicToggle.classList.remove('off');
+      }
+
+      // รอ 6 วินาที (รวมเวลาของข้อความ "ยินดีที่ได้รู้จัก") ก่อนที่จะพาไปหน้าใหม่
+      setTimeout(function() {
+        // ทำให้ div .fade-out ค่อยๆ จางไป
+        const fadeOutDiv = document.getElementById("fadeOut");
+        fadeOutDiv.style.opacity = 1; // ทำให้ div .fade-out ค่อยๆ กลายเป็นสีดำ
+
+        // พาไปหน้าใหม่หลังจากการเปลี่ยนแปลง
+        setTimeout(function() {
+          window.location.href = 'today.html'; // เปลี่ยน URL ตามที่ต้องการ
+        }, 2000); // รอ 2 วินาที ให้การเปลี่ยนแปลง opacity เสร็จสมบูรณ์
+      }, 8000); // 8000 milliseconds = 8 seconds (6 วินาทีหลังจากข้อความ "ยินดีที่ได้รู้จัก" แสดง)
+    };
+  </script>
+
+</body>
+</html>

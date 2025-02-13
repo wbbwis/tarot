@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สุ่มไพ่ทาโรต์</title>
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Prompt', sans-serif;
+            background-color: transparent;
+            margin: 0;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+            background-blend-mode: overlay;
+            filter: blur(1px);
+            z-index: -1; /* ดาวอยู่เบื้องหลัง */
+        }
+
+        .star-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none; /* ให้ไม่รบกวนการคลิก */
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background-color: white;
+            opacity: 0.8;
+            animation: twinkle 1s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            height: 100vh;
+            position: relative;
+            opacity: 0;
+            transition: opacity 3s ease-out;
+            z-index: 1; /* การ์ดอยู่ด้านหน้า */
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            gap: 0;
+        }
+
+        .card {
+            width: 140px;
+            height: 200px;
+            background-image: url('images/13.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: transform 1s ease-out, box-shadow 1s ease-out;
+            margin-top: -110px;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        .card.selected {
+            box-shadow: 0 0 40px rgb(143, 240, 255);
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        .message-container {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 24px;
+            color: #f3ff6f;
+        }
+
+        .message {
+            opacity: 0;
+            margin: 10px 0;
+            font-size: 24px;
+            transition: opacity 3s ease-in-out, transform 1s ease-out;
+            transform: translateY(20px);
+        }
+
+        .message.fadeIn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: #2456d3;
+            color: white;
+            border: none;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            z-index: 2;
+        }
+
+        .music-toggle:hover {
+            background-color: #2b5dc9;
+            transform: translateY(-5px);
+        }
+
+        .music-toggle img {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .prediction {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%) translateY(5%);
+            text-align: center;
+            font-size: 20px;
+            color: #fff;
+            background-color: rgba(53, 89, 252, 0.7);
+            padding: 15px 25px;
+            border-radius: 10px;
+            max-width: 80%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+</style>
+</head>
+<body>
+  <button class="music-toggle off" id="musicToggle" onclick="toggleMusic()">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/music.png" alt="music icon" id="musicIcon">
+    <span id="musicText"> เปิดเพลง</span>
+  </button>
+
+  <audio id="background-music" loop>
+    <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+    <div class="stars">
+        <div class="star-container"></div>
+    </div>
+    <div class="message-container" id="messagesContainer">
+        <div id="message1" class="message"></div>
+        <div id="message2" class="message"></div>
+        <div id="message3" class="message"></div>
+        <div id="message4" class="message"></div>
+    </div>
+
+    <div class="card-container">
+        <div class="column">
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 1">
+            </div>
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 2">
+            </div>
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 3">
+            </div>
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 4">
+            </div>
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 5">
+            </div>
+        </div>
+        <div class="column">
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 6">
+            </div>
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 7">
+            </div>
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 8">
+            </div>
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 9">
+            </div>
+            <div class="card" onclick="selectCard(this)">
+                <img src="images/13.jpg" alt="Card 10">
+            </div>
+        </div>
+    </div>
+
+    <div id="predictionContainer" class="prediction">
+        <p id="predictionText"></p>
+    </div>
+
+    <button class="next-button" id="nextButton" onclick="goToNextPage()">หน้าถัดไป</button>
+
+    <script>
+        const messages = [
+            "เป็นไงบ้าง?",
+            "หายใจลึกๆ ทำตัวสบายๆ",
+            "วันนี้เรามารับพลังดีๆ",
+            "เพื่อเริ่มต้นวันที่ดีกันดีกว่า"
+        ];
+
+        const messageElements = [
+            document.getElementById("message1"),
+            document.getElementById("message2"),
+            document.getElementById("message3"),
+            document.getElementById("message4")
+        ];
+
+        const cardContainer = document.querySelector(".card-container");
+
+        function showMessages() {
+            messages.forEach((message, index) => {
+                setTimeout(() => {
+                    messageElements[index].textContent = message;
+                    messageElements[index].classList.add('fadeIn');
+                }, index * 4000);
+            });
+
+            setTimeout(() => {
+                messageElements.forEach(messageElement => {
+                    messageElement.style.opacity = 0;
+                });
+            }, messages.length * 4000);
+        }
+
+        function toggleMusic() {
+            const music = document.getElementById("background-music");
+            const toggleButton = document.getElementById("musicToggle");
+            const musicText = document.getElementById("musicText");
+            const musicIcon = document.getElementById("musicIcon");
+
+            if (music.paused) {
+                music.play();
+                toggleButton.classList.add("on");
+                toggleButton.classList.remove("off");
+                musicText.textContent = " ปิดเพลง";
+                localStorage.setItem("musicState", "playing");
+            } else {
+                music.pause();
+                toggleButton.classList.add("off");
+                toggleButton.classList.remove("on");
+                musicText.textContent = " เปิดเพลง";
+                localStorage.setItem("musicState", "paused");
+            }
+        }
+
+        window.onload = function () {
+            const musicState = localStorage.getItem("musicState");
+            if (musicState === "playing") {
+                document.getElementById("background-music").play();
+                document.getElementById("musicToggle").classList.add("on");
+                document.getElementById("musicToggle").classList.remove("off");
+                document.getElementById("musicText").textContent = " ปิดเพลง";
+            }
+        };
+
+        function showCard() {
+            setTimeout(() => {
+                cardContainer.style.opacity = 1; 
+            }, messages.length * 5000);
+        }
+
+        function selectCard(cardElement) {
+            cardElement.classList.add('selected');
+            setTimeout(() => {
+                const predictionText = [
+                    " หากพระอาทิตย์ยังคงส่องแสงในทุกเช้าวัน นั่นแปลว่าเธอยังมีโอกาสให้เริ่มต้นใหม่เสมอ",
+                    "สร้างพลังบวกให้ตัวเองเสมอ มีทัศนคติที่ดี สิ่งเหล่านี้จะพาเธอไปเจอแต่สิ่งดีๆ",
+                    " คาดหวังได้แต่หากผิดหวัง แค่ยอมรับและเดินหน้าต่อไปอย่าลืมยิ้มให้ตัวเอง",
+                    " ไม่ใช่ทุกวันที่จะดี แต่ก็ไม่ใช่ทุกวันที่จะแย่",
+                     " ขอให้เธอพกความสุขไปทุกที่ยิ้มกับเรื่องๆน้อยๆที่เจอในทุกวัน",
+                      "ภูมิใจกับตัวเองเยอะๆนะ เพราะเธอมีแค่คนเดียวบนโลกใบนี้",
+                      "พอใจในตัวเองไม่ว่าเธอจะเป็นแบบไหน หากเธอพอใจนั่นคือพอดี",
+                      "ต่อให้วันนี้จะมีคนผิดหวังในตัวเธอ แต่ขอให้ไม่ผิดหวังในตัวเอง ให้อภัยตัวเองนะ",
+                      "ถึงแม้จะไปไม่ถึงที่คาดหวังไว้แต่มาถึงตรงนี้ได้ก็เก่งแล้วนะ",
+                      "วันที่แย่ไม่ได้อยู่ตลอดไป เช่นเดียวกับวันที่ดีที่จะรอเธออยู่",
+                      "ผู้ที่เจ็บปวดกับการเรียนเมื่อถึงสุดปลายทางรอยยิ้มของคุณจะสว่างไสวที่สุดในโลกฉะนั้น ขอจงอย่ายอมแพ้",
+                      "ลองหาอะไรที่ชอบทำเพื่อผ่อนคลายดูสิ เช่น ฟังเพลง อ่านหนังสือ หรือออกไปเดินเล่น",
+                      "เข้าใจเลยว่าตอนนี้รู้สึกดดันแค่ไหน การเรียนเป็นเรื่องสำคัญ แต่ก็อย่าลืมดูแลตัวเองด้วยนะ",
+                      "ทุกวันนี้เป็นวันใหม่ เธอสามารถเริ่มต้นอะไรใหม่ๆ ได้เสมอ",
+                      "ความผิดพลาดเป็นเรื่องธรรมดาของมนุษย์ เราสามารถเรียนรู้และเติบโตจากมันได้",
+                      "ความเข้มแข็งไม่ได้หมายถึงการไม่ร้องไห้ แต่คือการที่เธอลุกขึ้นสูอีกได้แม้จะร้องไห้ไปแล้วก็ตาม",
+                     "ไม่ต้องแบกทุกอย่างในชีวิต หรือรู้สึกผิดตลอดไปก็ได้ ทุกอย่างเข้ามาให้เราเรียนรู้ พลาดแล้วก็เติบโตเพราะนี้ก็เป็นครั้งแรกที่เรามีชีวิตเหมือนกัน",
+                     "การพักผ่อนคือส่วนหนึ่งของความสำเร็จในการเรียน ไม่ต้องรู้สึกผิดที่จะนอนหรือฟังเพลงที่ชอบสักเพลงนะ",
+                     "ถ้าเราไม่หลงทางเลยเราก็คงไม่เจอสิ่งที่เราอยากทำ เราก็คงทำอะไรเดิม ๆ เรื่อย ๆ ไปวัน ๆ เพราะฉะนั้นวันนี้ถ้ารู้สึกหลงทางอยู่อย่าเพิ่งยอมแพ้นะ",
+                     "เธอกำลังรับมือสถานการณ์ตอนนี้ได้ดีกว่าเมื่อก่อนเยอะเลยนะ เก่งขึ้นมากขนาดนี้ อย่าลืมโอบกอดตัวเองนะ",
+                    "ดอกไม้แต่ละชนิดผลิบานตามฤดูของมันเอง ตอนนี้อาจยังไม่ถึงช่วงเวลาของคุณอาจสายไปหน่อย เมื่อเทียบกับคนอื่น แต่ถ้าฤดูของคุณมาถึงจังหวะนั้น จะเป็นจุดเริ่มต้นที่ดี",
+            ]
+                const randomPrediction = predictionText[Math.floor(Math.random() * predictionText.length)];
+        const predictionContainer = document.getElementById("predictionContainer");
+        const predictionTextElement = document.getElementById("predictionText");
+
+        predictionTextElement.textContent = randomPrediction;
+        predictionContainer.style.opacity = 1;
+
+       // เปลี่ยนหน้าไปที่ฟอร์มการประเมินทันทีหลังจากแสดงคำทำนาย
+       setTimeout(() => {
+            window.location.href = "ฟอร์มการประเมิน.html"; // URL ของหน้าถัดไป
+        }, 5000); // รอ 5 วินาทีหลังจากแสดงคำทำนายแล้วค่อยเปลี่ยนหน้า
+    }, 1000);
+}
+
+        function createStars() {
+    const starContainer = document.querySelector('.star-container');
+    for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        const size = Math.random() * 3 + 1; // ขนาดของดาว
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.animationDuration = Math.random() * 2 + 2 + 's';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        starContainer.appendChild(star);
+    }
+}
+
+createStars();  // เรียกฟังก์ชันแยกต่างหากเพื่อสร้างดาว
+
+
+        showMessages();
+        showCard();
+    </script>
+</body>
+</html>

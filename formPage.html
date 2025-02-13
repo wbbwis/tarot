@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Page with Music</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    body {
+      background: black;
+      transition: background-color 1s ease-in-out;
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+      background-blend-mode: overlay;
+      animation: gradientShift 40s ease-in-out infinite alternate;
+      filter: blur(1px);
+    }
+
+    @keyframes gradientShift {
+      0% { background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%); }
+      50% { background: radial-gradient(circle at 48% 32%, rgba(15, 10, 70, 1) 10%, rgba(50, 30, 170, 1) 60%, rgba(0, 200, 255, 0.7) 100%); }
+      100% { background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%); }
+    }
+
+    .star {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background-color: #d88ac7;
+      color: white;
+      border: none;
+      font-size: 16px; 
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .music-toggle:hover {
+      background-color: #c17edc;
+      transform: translateY(-5px);
+    }
+
+    .music-toggle img {
+      margin-right: 10px;
+      width: 20px;
+    }
+
+    .music-toggle.off {
+      background-color: #2b5dc9;
+    }
+
+    .music-toggle.on {
+      background-color: #2456d3;
+    }
+
+    /* Media Queries */
+    @media screen and (max-width: 1024px) {
+      .music-toggle {
+        top: 15px;
+        right: 15px;
+        padding: 14px 22px;
+        font-size: 15px;
+      }
+
+      .music-toggle img {
+        width: 18px;
+      }
+
+      .container {
+        padding: 20px;
+        width: 80%;
+        max-width: 450px;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      label {
+        font-size: 0.85rem;
+      }
+
+      input {
+        font-size: 0.9rem;
+      }
+
+      button {
+        font-size: 0.9rem;
+        padding: 10px 18px;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .music-toggle {
+        top: 10px;
+        right: 10px;
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+
+      .music-toggle img {
+        width: 16px;
+      }
+
+      .container {
+        padding: 15px;
+        width: 85%;
+        max-width: 400px;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      label {
+        font-size: 0.8rem;
+      }
+
+      input {
+        font-size: 0.85rem;
+      }
+
+      button {
+        font-size: 0.85rem;
+        padding: 8px 16px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .music-toggle {
+        top: 5px;
+        right: 5px;
+        padding: 10px 18px;
+        font-size: 13px;
+      }
+
+      .music-toggle img {
+        width: 14px;
+      }
+
+      .container {
+        padding: 12px;
+        width: 90%;
+        max-width: 350px;
+      }
+
+      h1 {
+        font-size: 1.2rem;
+      }
+
+      label {
+        font-size: 0.75rem;
+      }
+
+      input {
+        font-size: 0.8rem;
+      }
+
+      button {
+        font-size: 0.8rem;
+        padding: 8px 15px;
+      }
+    }
+
+    .image-container {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+    }
+
+    .image-container img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 50vh;
+      object-fit: contain;
+    }
+
+    body {
+      font-family: 'Prompt', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f4f8;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      z-index: 10;
+      position: absolute;
+      top: 10%;
+      width: 80%;
+      max-width: 500px;
+    }
+
+    h1 {
+      color: #ff70c3;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #fe7bce;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background-color: #ff85ce;
+    }
+
+    .error {
+      color: rgb(255, 62, 62);
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <div class="container">
+    <h1>แนะนำตัวให้เรารู้จักหน่อย</h1>
+    <form id="nameAgeForm" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label for="name">ชื่อ:</label>
+        <input type="text" id="name" placeholder="กรอกชื่อของคุณ">
+        <div id="nameError" class="error"></div>
+      </div>
+      <div class="form-group">
+        <label for="age">อายุ:</label>
+        <input type="number" id="age" placeholder="กรอกอายุของคุณ">
+        <div id="ageError" class="error"></div>
+      </div>
+      <button type="submit">ยืนยัน</button>
+    </form>
+  </div>
+
+  <button class="music-toggle off" id="musicToggle" onclick="toggleMusic()">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/music.png" alt="music icon" id="musicIcon">
+    <span id="musicText"> เปิดเพลง</span>
+  </button>
+
+  <audio id="background-music" loop>
+    <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <div class="image-container">
+    <img src="images/S__15745027-removebg-preview.png" alt="Your image description">
+  </div>
+
+  <script>
+    const music = document.getElementById("background-music");
+    const musicToggle = document.getElementById("musicToggle");
+    const musicText = document.getElementById("musicText");
+
+    function toggleMusic() {
+      if (music.paused) {
+        music.play().then(() => {
+          musicText.textContent = " ปิดเพลง";
+          musicToggle.classList.add('on');
+          musicToggle.classList.remove('off');
+          localStorage.setItem("musicState", "playing");
+        }).catch((error) => {
+          console.log("Error playing music:", error);
+          alert("ไม่สามารถเล่นเพลงได้อัตโนมัติ ต้องคลิกเพื่อเปิดเสียง");
+        });
+      } else {
+        music.pause();
+        musicText.textContent = " เปิดเพลง";
+        musicToggle.classList.add('off');
+        musicToggle.classList.remove('on');
+        localStorage.setItem("musicState", "paused");
+      }
+    }
+
+    window.onload = function () {
+      const musicState = localStorage.getItem("musicState");
+      if (musicState === "playing") {
+        music.play();
+        musicText.textContent = "ปิดเพลง";
+        musicToggle.classList.add('on');
+        musicToggle.classList.remove('off');
+      } else {
+        music.pause();
+        musicText.textContent = "เปิดเพลง";
+        musicToggle.classList.add('off');
+        musicToggle.classList.remove('on');
+      }
+    };
+
+    function handleSubmit(event) {
+  event.preventDefault(); // Prevent page reload
+
+  const name = document.getElementById("name").value;
+  const age = document.getElementById("age").value;
+  let valid = true;
+
+  // Clear previous error messages
+  document.getElementById("nameError").textContent = "";
+  document.getElementById("ageError").textContent = "";
+
+  // Check for valid name and age
+  if (name.trim() === "") {
+    document.getElementById("nameError").textContent = "รบกวนกรอกชื่อให้หน่อยนะ";
+    valid = false;
+  }
+
+  if (age.trim() === "" || isNaN(age) || age <= 0) {
+    document.getElementById("ageError").textContent = "รบกวนกรอกอายุให้หน่อยนะ";
+    valid = false;
+  }
+
+  if (valid) {
+    // Save name in localStorage
+    localStorage.setItem('userName', name);
+    // Redirect to the next page
+    window.location.href = "hello.html";
+  }
+}
+
+
+    function createStars() {
+      const starContainer = document.querySelector('.stars');
+      const numStars = 100;
+
+      for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+
+        let size = Math.random() * 3 + 1;
+        let x = Math.random() * window.innerWidth;
+        let y = Math.random() * window.innerHeight;
+        let duration = Math.random() * 3 + 2;
+
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${x}px`;
+        star.style.top = `${y}px`;
+        star.style.animationDuration = `${duration}s`;
+
+        starContainer.appendChild(star);
+      }
+    }
+  
+    createStars();
+  </script>
+</body>
+</html>

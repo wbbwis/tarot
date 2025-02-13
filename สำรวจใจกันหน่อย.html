@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สำรวจใจ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Prompt', sans-serif;
+      background-color: #000; /* Adding dark background */
+    }
+
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+      background-blend-mode: overlay;
+      animation: gradientShift 40s ease-in-out infinite alternate;
+      filter: blur(1px);
+    }
+
+    @keyframes gradientShift {
+      0% { background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%); }
+      50% { background: radial-gradient(circle at 48% 32%, rgba(15, 10, 70, 1) 10%, rgba(50, 30, 170, 1) 60%, rgba(0, 200, 255, 0.7) 100%); }
+      100% { background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%); }
+    }
+
+    .star {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background-color: #2456d3;
+      color: white;
+      border: none;
+      font-size: 18px;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      z-index: 2;
+    }
+
+    .music-toggle:hover {
+      background-color: #2b5dc9;
+      transform: translateY(-5px);
+    }
+
+    .music-toggle img {
+      margin-right: 10px;
+      width: 20px;
+    }
+
+    .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #f8f8f8;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #f3ff6f;
+    }
+
+    .button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* ระยะห่างระหว่างปุ่ม */
+  flex-wrap: wrap;
+}
+
+.button-container button {
+  padding: 12px 20px;
+  font-size: 18px;
+  background-color: #d88ac7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-width: 120px; /* ให้ปุ่มมีขนาดเท่ากัน */
+  text-align: center;
+}
+
+    .button-container button:hover {
+      background-color: #c17edc;
+    }
+
+    .heart-image {
+      margin-top: 20px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 3;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+    }
+
+    .modal-content {
+      background-color: #141313;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    .modal-button {
+      padding: 10px 20px;
+      background-color: #d88ac7;
+      border: none;
+      font-size: 18px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    .modal-button:hover {
+      background-color: #c17edc;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stars"></div>
+
+  <div class="container">
+    <h1>ลองมาสำรวจความในใจกันหน่อยนะ</h1>
+    <p>พร้อมไหม?</p>
+
+    <div class="button-container">
+      <button onclick="startExploration()">พร้อม</button>
+      <button onclick="notReady()">ไม่พร้อม</button>
+    </div>
+
+    <img src="images/S__15745027-removebg-preview.png" class="heart-image">
+  </div>
+
+  <button class="music-toggle off" id="musicToggle" onclick="toggleMusic()">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/music.png" alt="music icon" id="musicIcon">
+    <span id="musicText"> เปิดเพลง</span>
+  </button>
+
+  <audio id="background-music" loop>
+    <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Modal for not ready message -->
+  <div class="modal" id="notReadyModal">
+    <div class="modal-content">
+      <p id="notReadyMessage">ฉันจะรอจนกว่าคุณจะพร้อม</p>
+      <button class="modal-button" onclick="closeModal()">ตกลง</button>
+    </div>
+  </div>
+
+  <script>
+    // เพิ่มดาวในพื้นหลัง
+    function createStars() {
+      const starContainer = document.querySelector('.stars');
+      const numStars = 100;
+
+      for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+
+        let size = Math.random() * 3 + 1;
+        let x = Math.random() * window.innerWidth;
+        let y = Math.random() * window.innerHeight;
+        let duration = Math.random() * 3 + 2;
+
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${x}px`;
+        star.style.top = `${y}px`;
+        star.style.animationDuration = `${duration}s`;
+
+        starContainer.appendChild(star);
+      }
+    }
+    createStars();
+
+    // ฟังก์ชันเมื่อกดปุ่ม "พร้อม"
+    function startExploration() {
+      window.location.href = "2Q.html"; // แทนที่ "nextPage.html" ด้วย URL ของหน้าถัดไป
+    }
+
+    function notReady() {
+      const modal = document.getElementById('notReadyModal');
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('notReadyModal');
+      modal.style.display = 'none';
+    }
+
+    function toggleMusic() {
+      const music = document.getElementById("background-music");
+      const toggleButton = document.getElementById("musicToggle");
+      const musicText = document.getElementById("musicText");
+      const musicIcon = document.getElementById("musicIcon");
+
+      if (music.paused) {
+        music.play();
+        toggleButton.classList.add("on");
+        toggleButton.classList.remove("off");
+        musicText.textContent = " ปิดเพลง";
+        localStorage.setItem("musicState", "playing");
+      } else {
+        music.pause();
+        toggleButton.classList.add("off");
+        toggleButton.classList.remove("on");
+        musicText.textContent = " เปิดเพลง";
+      }
+    }
+
+    window.onload = function () {
+      const musicState = localStorage.getItem("musicState");
+      if (musicState === "playing") {
+        document.getElementById("background-music").play();
+      }
+    };
+    function redirectToNewPage() {
+    window.location.href = "สำรวจใจกันหน่อย.html";
+  }
+  </script>
+
+</body>
+</html>

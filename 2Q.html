@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แบบคัดกรองโรคซึมเศร้า 2 คำถาม (2Q)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+      body {
+      font-family: 'Prompt', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: #000; /* สีพื้นหลังของท้องฟ้ายามค่ำคืน */
+      background-image: url('https://www.w3schools.com/w3images/stars.jpg'); /* ใช้ภาพดวงดาว */
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    /* ดาวที่อยู่ในพื้นหลัง */
+    .stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+      background-blend-mode: overlay;
+      animation: gradientShift 40s ease-in-out infinite alternate;
+      filter: blur(1px);
+      z-index: -1; /* ให้ดาวอยู่ใต้เนื้อหา */
+    }
+
+    /* เคลื่อนไหวของดาว */
+    @keyframes gradientShift {
+      0% { background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%); }
+      50% { background: radial-gradient(circle at 48% 32%, rgba(15, 10, 70, 1) 10%, rgba(50, 30, 170, 1) 60%, rgba(0, 200, 255, 0.7) 100%); }
+      100% { background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%); }
+    }
+
+    .star {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      padding: 40px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      color: #2fbeea;
+      font-size: 2.4em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .question-box {
+      background-color: rgba(240, 244, 248, 1);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .question {
+      font-size: 1.2rem;
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #ffa1d0;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #f694c2;
+      transform: scale(1.1);
+    }
+
+    .alert-message {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 500px;
+      color: #f694c2;
+      padding: 15px 20px;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      text-align: center;
+      background-color: #ffffff;
+      transition: top 0.5s ease;
+      z-index: 1000;
+    }
+
+    .alert-message-error {
+      background-color: #fbe4e6;
+      color: #6a1a21;
+    }
+
+    .alert-message-sending {
+      background-color: #d88ac7; /* สีฟ้าอ่อน */
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: #2456d3;
+      color: white;
+      border: none;
+      font-size: 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .music-toggle:hover {
+      background-color: #2b5dc9;
+      transform: translateY(-5px);
+    }
+
+    @media (min-width: 1024px) {
+      h1 {
+        font-size: 2.8em;
+      }
+      .container {
+        width: 70%;
+        padding: 40px;
+      }
+      button {
+        font-size: 1.2rem;
+        padding: 12px 24px;
+      }
+      .music-toggle {
+        font-size: 18px;
+        padding: 15px 25px;
+      }
+    }
+
+    @media (max-width: 1024px) and (min-width: 768px) {
+      h1 {
+        font-size: 2.4em;
+      }
+      .container {
+        width: 80%;
+        padding: 35px;
+      }
+      button {
+        font-size: 1.1rem;
+        padding: 10px 20px;
+      }
+      .music-toggle {
+        font-size: 16px;
+        padding: 12px 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2em;
+        margin-bottom: 20px;
+      }
+      .container {
+        width: 90%;
+        padding: 20px;
+      }
+      button {
+        font-size: 1rem;
+        padding: 10px 20px;
+      }
+      .music-toggle {
+        font-size: 16px;
+        padding: 12px 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+      }
+      .container {
+        width: 90%;
+        padding: 15px;
+      }
+      button {
+        font-size: 1rem;
+        padding: 8px 16px;
+      }
+      .music-toggle {
+        font-size: 14px;
+        padding: 10px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div> <!-- เพิ่ม div สำหรับดาว -->
+  <audio id="background-music" loop>
+    <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <button id="toggleMusic" class="music-toggle"> ปิดเสียง</button>
+  <div class="container">
+    <h1>แบบคัดกรองโรคซึมเศร้าด้วย 2 คำถาม (2Q)</h1>
+    <form id="assessmentForm" onsubmit="handleSubmit(event)">
+      <div class="question-box">
+        <p class="question">1. ในช่วง 2 สัปดาห์ที่ผ่านมา คุณรู้สึกเบื่อ หรือไม่อยากทำอะไรเลยหรือไม่?</p>
+        <label><input type="radio" name="question1" value="1"> ใช่</label>
+        <label><input type="radio" name="question1" value="0"> ไม่ใช่</label>
+      </div>
+      <div class="question-box">
+        <p class="question">2. ในช่วง 2 สัปดาห์ที่ผ่านมา คุณรู้สึกเศร้า ท้อแท้ หรือสิ้นหวังหรือไม่?</p>
+        <label><input type="radio" name="question2" value="1"> ใช่</label>
+        <label><input type="radio" name="question2" value="0"> ไม่ใช่</label>
+      </div>
+      <button type="submit">ส่งคำตอบ</button>
+    </form>
+  </div>
+
+  <div class="alert-message" id="alertMessage"></div>
+
+  <script>
+    const alertMessage = document.getElementById("alertMessage");
+    const music = document.getElementById("background-music");
+    const toggleButton = document.getElementById("toggleMusic");
+
+    // ดึงข้อมูลสถานะเพลงจาก localStorage เมื่อโหลดหน้า
+    window.onload = function () {
+      const musicState = localStorage.getItem("musicState");
+      if (musicState === "playing") {
+        music.play();
+        toggleButton.textContent = "ปิดเสียง";
+      } else {
+        music.pause();
+        toggleButton.textContent = "เปิดเพลง";
+      }
+    };
+
+    // ฟังก์ชันเปลี่ยนสถานะเพลง
+    toggleButton.onclick = function () {
+      if (music.paused) {
+        music.play();
+        toggleButton.textContent = "ปิดเสียง";
+        localStorage.setItem("musicState", "playing");
+      } else {
+        music.pause();
+        toggleButton.textContent = "เปิดเพลง";
+        localStorage.setItem("musicState", "paused");
+      }
+    };
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      const question1 = document.querySelector('input[name="question1"]:checked');
+      const question2 = document.querySelector('input[name="question2"]:checked');
+
+      if (question1 && question2) {
+        const score = parseInt(question1.value) + parseInt(question2.value);
+
+        // แสดงข้อความ "กำลังส่งคำตอบ..." พร้อมกับเปลี่ยนสี
+        alertMessage.textContent = "กำลังส่งคำตอบ...";
+        alertMessage.className = "alert-message alert-message-sending"; // ใช้คลาสใหม่
+        alertMessage.style.top = "20px";
+
+        setTimeout(() => {
+          let interpretation = '';
+          let alertClass = '';
+          if (score === 0) {
+            interpretation = `คะแนนของคุณคือ ${score}: ปกติ ไม่เป็นโรคซึมเศร้า`;
+            alertClass = "alert-message-success";
+          } else if (score >= 1) {
+            interpretation = `คะแนนของคุณคือ ${score}: คุณมีความเสี่ยงต่อภาวะซึมเศร้า`;
+            alertClass = "alert-message-warning";
+          }
+
+          alertMessage.textContent = interpretation;
+          alertMessage.className = `alert-message ${alertClass}`;
+          alertMessage.style.top = "20px";
+
+          setTimeout(() => {
+            alertMessage.style.top = "-100px";
+            // รอแป๊บแล้วพาไปหน้า "ผลการประเมิน"
+            if (score === 0) {
+            window.location.href = "result.html";  // ไปยังหน้าผลการประเมิน
+          } else {
+            window.location.href = `9q.html?score=${score}`;  // ไปหน้า 9Q ถ้าคะแนน 1 หรือ 2
+          }
+          }, 3000); // หลังจาก 3 วินาทีจะไปหน้าใหม่
+        }, 1000); // แสดงข้อความ "กำลังส่งคำตอบ..." สักพักก่อนแสดงผล
+      } else {
+        alertMessage.textContent = "กรุณาตอบคำถามให้ครบทุกข้อ!";
+        alertMessage.className = "alert-message alert-message-error";
+        alertMessage.style.top = "20px";
+
+        setTimeout(() => {
+          alertMessage.style.top = "-100px";
+        }, 3000);
+      }
+    }
+
+    function createStars() {
+      const starContainer = document.querySelector('.stars');
+      const numStars = 100;
+
+      for (let i = 0; i < numStars; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+
+        let size = Math.random() * 3 + 1;  // ดาวมีขนาดสุ่ม
+        let x = Math.random() * window.innerWidth;  // ตำแหน่ง x ของดาว
+        let y = Math.random() * window.innerHeight; // ตำแหน่ง y ของดาว
+        let duration = Math.random() * 3 + 2;  // ความเร็วในการกระพริบของดาว
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${x}px`;
+        star.style.top = `${y}px`;
+        star.style.animationDuration = `${duration}s`;
+
+        starContainer.appendChild(star);
+      }
+    }
+    createStars();
+  </script>
+</body>
+</html>

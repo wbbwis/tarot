@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Good Vibes Only</title>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background-color: #f0f4f8;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Background */
+    .background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+      background-blend-mode: overlay;
+      animation: gradientShift 40s ease-in-out infinite alternate;
+      filter: blur(1px);
+      z-index: -2;
+    }
+
+    @keyframes gradientShift {
+      0% { background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%); }
+      50% { background: radial-gradient(circle at 48% 32%, rgba(15, 10, 70, 1) 10%, rgba(50, 30, 170, 1) 60%, rgba(0, 200, 255, 0.7) 100%); }
+      100% { background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%); }
+    }
+
+    /* Starry Sky */
+    .star {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 800px;
+      padding: 50px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2fbeea;
+      font-size: 2.8em;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .form-container {
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+
+    textarea {
+      padding: 15px;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      width: 80%;
+      max-width: 500px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      resize: none;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #ffa1d0;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #f694c2;
+      transform: scale(1.1);
+    }
+    .music-toggle img {
+      margin-right: 10px;
+      width: 20px;
+    }
+    .music-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background-color: #d88ac7;
+      color: white;
+      border: none;
+      font-size: 18px;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .music-toggle:hover {
+      background-color: #c17edc;
+      transform: translateY(-5px);
+    }
+
+    .music-toggle.off {
+      background-color: #2b5dc9;
+    }
+
+    .music-toggle.on {
+      background-color: #2456d3;
+    }
+
+    /* แจ้งเตือน */
+    .alert-message {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #2b5dc9; /* สีชมพูอ่อน */
+      color: #ffffff; /* ข้อความสีขาว */
+      padding: 20px 40px;
+      border-radius: 25px;
+      font-size: 1.4rem;
+      text-align: center;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      animation: slideIn 1s ease-out;
+      font-family: 'Prompt', sans-serif;
+    }
+
+    /* แจ้งเตือนเมื่อมีข้อผิดพลาด */
+    .alert-message-error {
+      background-color: #2b5dc9; /* สีชมพูอ่อนพิเศษ */
+      color: #ffffff; /* ข้อความสีขาว */
+      border: 2px solid #2b5dc9; /* ขอบสีชมพูเข้มกว่า */
+    }
+
+    /* การเคลื่อนไหวของกล่องแจ้งเตือน */
+    @keyframes slideIn {
+      0% { transform: translateX(-50%) translateY(-100%); }
+      100% { transform: translateX(-50%) translateY(0); }
+    }
+
+    @media (min-width: 1024px) {
+      h1 {
+        font-size: 2.8em;
+      }
+
+      .container {
+        width: 70%;
+        padding: 40px;
+      }
+
+      textarea {
+        width: 80%;
+        font-size: 1.2rem;
+      }
+
+      button {
+        font-size: 1.2rem;
+        padding: 12px 24px;
+      }
+
+      .music-toggle {
+        font-size: 18px;
+        padding: 15px 25px;
+      }
+    }
+
+    @media (max-width: 1024px) and (min-width: 768px) {
+      h1 {
+        font-size: 2.4em;
+      }
+
+      .container {
+        width: 80%;
+        padding: 35px;
+      }
+
+      textarea {
+        width: 85%;
+        font-size: 1.1rem;
+      }
+
+      button {
+        font-size: 1.1rem;
+        padding: 10px 20px;
+      }
+
+      .music-toggle {
+        font-size: 16px;
+        padding: 12px 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2em;
+        margin-bottom: 20px;
+      }
+
+      .container {
+        width: 90%;
+        padding: 20px;
+      }
+
+      textarea {
+        width: 90%;
+        font-size: 1rem;
+      }
+
+      button {
+        font-size: 1rem;
+        padding: 10px 20px;
+      }
+
+      .music-toggle {
+        font-size: 16px;
+        padding: 12px 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+      }
+
+      .container {
+        width: 90%;
+        padding: 15px;
+      }
+
+      textarea {
+        font-size: 0.9rem;
+        width: 85%;
+      }
+
+      button {
+        font-size: 1rem;
+        padding: 8px 16px;
+      }
+
+      .music-toggle {
+        font-size: 14px;
+        padding: 10px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="background"></div>
+
+<div class="container">
+  <h1>Good Vibes Only</h1>
+  <div class="form-container" id="form-container">
+    <p>วันนี้เป็นไงบ้าง? แชร์ความคิดเห็นของคุณ:</p>
+    <textarea id="feedback" placeholder="แชร์ความคิดเห็นของคุณที่นี่..." rows="5"></textarea>
+    <br>
+    <button onclick="submitForm()">ยืนยัน</button>
+  </div>
+</div>
+
+<div class="alert-message" id="alertMessage">ขอบคุณที่แชร์!</div>
+<div class="alert-message alert-message-error" id="errorMessage">ช่วยบอกเราหน่อยนะ</div>
+
+<button class="music-toggle off" id="musicToggle" onclick="toggleMusic()">
+  <img src="https://img.icons8.com/ios-filled/50/ffffff/music.png" alt="music icon" id="musicIcon">
+  <span id="musicText"> เปิดเพลง</span>
+</button>
+
+<audio id="background-music" loop>
+  <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
+  Your browser does not support the audio element.
+</audio>
+
+<script>
+  const music = document.getElementById("background-music");
+  const musicToggle = document.getElementById("musicToggle");
+  const musicText = document.getElementById("musicText");
+
+  function toggleMusic() {
+    if (music.paused) {
+      music.play().then(() => {
+        musicText.textContent = " ปิดเพลง";
+        musicToggle.classList.add('on');
+        musicToggle.classList.remove('off');
+        localStorage.setItem("musicState", "playing");
+      }).catch((error) => {
+        console.log("Error playing music:", error);
+        alert("ไม่สามารถเล่นเพลงได้อัตโนมัติ ต้องคลิกเพื่อเปิดเสียง");
+      });
+    } else {
+      music.pause();
+      musicText.textContent = " เปิดเพลง";
+      musicToggle.classList.add('off');
+      musicToggle.classList.remove('on');
+      localStorage.setItem("musicState", "paused");
+    }
+  }
+
+  window.onload = function () {
+    const musicState = localStorage.getItem("musicState");
+    if (musicState === "playing") {
+      music.play().then(() => {
+        musicText.textContent = " ปิดเพลง";
+        musicToggle.classList.add('on');
+        musicToggle.classList.remove('off');
+      }).catch((error) => {
+        console.log("Error playing music:", error);
+      });
+    }
+
+    // Make the form visible
+    const formContainer = document.getElementById('form-container');
+    formContainer.style.opacity = 1;
+
+    createStars();
+  }
+
+  function createStars() {
+    const numStars = 150;
+    for (let i = 0; i < numStars; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      
+      const size = Math.random() * 5 + 2;
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+      const duration = Math.random() * 3 + 2;
+
+      star.style.width = `${size}px`;
+      star.style.height = `${size}px`;
+      star.style.left = `${x}px`;
+      star.style.top = `${y}px`;
+      star.style.animationDuration = `${duration}s`;
+
+      document.body.appendChild(star);
+    }
+  }
+
+  function submitForm() {
+    var feedback = document.getElementById('feedback').value;
+
+    if (feedback.trim() !== "") {
+      var alertMessage = document.getElementById('alertMessage');
+      alertMessage.style.display = "block";
+      setTimeout(function() {
+        alertMessage.style.display = "none";
+        redirectToNewPage();
+      }, 2000);
+    } else {
+      var errorMessage = document.getElementById('errorMessage');
+      errorMessage.style.display = "block";
+      setTimeout(function() {
+        errorMessage.style.display = "none";
+      }, 2000);
+    }
+  }
+
+  function redirectToNewPage() {
+    window.location.href = "สำรวจใจกันหน่อย.html";
+  }
+</script>
+
+</body>
+</html>
