@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สุ่มไพ่ทาโรต์</title>
+    <title>Starry Background and Card Interaction</title>
     <style>
         html, body {
             height: 100%;
@@ -15,16 +15,19 @@
         }
 
         .stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
-            background-blend-mode: overlay;
-            filter: blur(1px);
-            z-index: -1; /* ดาวอยู่เบื้องหลัง */
-        }
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-width: 100vw;
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 30%, rgba(10, 5, 50, 1) 10%, rgba(30, 20, 150, 1) 60%, rgba(0, 180, 255, 0.8) 100%);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    z-index: -10;
+}
 
         .star-container {
             position: absolute;
@@ -33,16 +36,18 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            pointer-events: none; /* ให้ไม่รบกวนการคลิก */
+            pointer-events: none;
         }
 
         .star {
-            position: absolute;
-            border-radius: 50%;
-            background-color: white;
-            opacity: 0.8;
-            animation: twinkle 1s infinite alternate;
-        }
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 2s infinite alternate ease-in-out;
+}
+
+
 
         @keyframes twinkle {
             0% { opacity: 0.8; }
@@ -53,39 +58,36 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 50px;
             height: 100vh;
-            position: relative;
             opacity: 0;
-            transition: opacity 3s ease-out;
-            z-index: 1; /* การ์ดอยู่ด้านหน้า */
+            transition: opacity 2s ease-in-out;
+            position: absolute;
+            top: 50%;
+            left: 56%;
+            transform: translate(-50%, -50%);
         }
 
         .column {
             display: flex;
-            flex-direction: column;
-            position: relative;
-            gap: 0;
+            flex-direction: row;
+            margin-right: 20px;
         }
 
         .card {
-            width: 140px;
+            width: 125px;
             height: 200px;
-            background-image: url('images/13.jpg');
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            transition: transform 1s ease-out, box-shadow 1s ease-out;
-            margin-top: -110px;
-            z-index: 1;
+            margin: 10px;
+            border-radius: 10px;
             overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
         }
 
         .card:hover {
@@ -99,19 +101,21 @@
         }
 
         .message-container {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            font-size: 24px;
-            color: #f3ff6f;
-        }
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%; /* Ensure full height to center vertically */
+    top: 0;
+    left: 0;
+    transform: none; /* Remove previous transformation */
+    text-align: center;
+    font-size: 24px;
+    color: #f3ff6f;
+}
+
 
         .message {
             opacity: 0;
@@ -169,23 +173,23 @@
             opacity: 0;
             transition: opacity 1.5s ease-in-out;
         }
-
-</style>
+    </style>
 </head>
 <body>
-  <button class="music-toggle off" id="musicToggle" onclick="toggleMusic()">
-    <img src="https://img.icons8.com/ios-filled/50/ffffff/music.png" alt="music icon" id="musicIcon">
-    <span id="musicText"> เปิดเพลง</span>
-  </button>
+    <button class="music-toggle off" id="musicToggle" onclick="toggleMusic()">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/music.png" alt="music icon" id="musicIcon">
+        <span id="musicText"> เปิดเพลง</span>
+    </button>
 
-  <audio id="background-music" loop>
-    <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
-    Your browser does not support the audio element.
-  </audio>
+    <audio id="background-music" loop>
+        <source src="audio/Piki - Your Story (freetouse.com).mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
 
     <div class="stars">
         <div class="star-container"></div>
     </div>
+
     <div class="message-container" id="messagesContainer">
         <div id="message1" class="message"></div>
         <div id="message2" class="message"></div>
@@ -193,7 +197,7 @@
         <div id="message4" class="message"></div>
     </div>
 
-    <div class="card-container">
+    <div class="card-container" id="cardContainer">
         <div class="column">
             <div class="card" onclick="selectCard(this)">
                 <img src="images/13.jpg" alt="Card 1">
@@ -204,37 +208,12 @@
             <div class="card" onclick="selectCard(this)">
                 <img src="images/13.jpg" alt="Card 3">
             </div>
-            <div class="card" onclick="selectCard(this)">
-                <img src="images/13.jpg" alt="Card 4">
-            </div>
-            <div class="card" onclick="selectCard(this)">
-                <img src="images/13.jpg" alt="Card 5">
-            </div>
-        </div>
-        <div class="column">
-            <div class="card" onclick="selectCard(this)">
-                <img src="images/13.jpg" alt="Card 6">
-            </div>
-            <div class="card" onclick="selectCard(this)">
-                <img src="images/13.jpg" alt="Card 7">
-            </div>
-            <div class="card" onclick="selectCard(this)">
-                <img src="images/13.jpg" alt="Card 8">
-            </div>
-            <div class="card" onclick="selectCard(this)">
-                <img src="images/13.jpg" alt="Card 9">
-            </div>
-            <div class="card" onclick="selectCard(this)">
-                <img src="images/13.jpg" alt="Card 10">
-            </div>
         </div>
     </div>
 
     <div id="predictionContainer" class="prediction">
         <p id="predictionText"></p>
     </div>
-
-    <button class="next-button" id="nextButton" onclick="goToNextPage()">หน้าถัดไป</button>
 
     <script>
         const messages = [
@@ -251,7 +230,7 @@
             document.getElementById("message4")
         ];
 
-        const cardContainer = document.querySelector(".card-container");
+        const cardContainer = document.getElementById("cardContainer");
 
         function showMessages() {
             messages.forEach((message, index) => {
@@ -272,7 +251,6 @@
             const music = document.getElementById("background-music");
             const toggleButton = document.getElementById("musicToggle");
             const musicText = document.getElementById("musicText");
-            const musicIcon = document.getElementById("musicIcon");
 
             if (music.paused) {
                 music.play();
@@ -299,17 +277,31 @@
             }
         };
 
+        function createStars() {
+            const starContainer = document.querySelector('.star-container');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.width = `${Math.random() * 3 + 1}px`;
+                star.style.height = star.style.width;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.animationDuration = `${Math.random() * 2 + 1}s`;
+                starContainer.appendChild(star);
+            }
+        }
+
         function showCard() {
             setTimeout(() => {
                 cardContainer.style.opacity = 1; 
-            }, messages.length * 5000);
+            }, messages.length * 5000);  // เมื่อข้อความหายไปทั้งหมด การ์ดจะแสดงขึ้นช้าลง
         }
 
         function selectCard(cardElement) {
             cardElement.classList.add('selected');
             setTimeout(() => {
                 const predictionText = [
-                    " หากพระอาทิตย์ยังคงส่องแสงในทุกเช้าวัน นั่นแปลว่าเธอยังมีโอกาสให้เริ่มต้นใหม่เสมอ",
+                " หากพระอาทิตย์ยังคงส่องแสงในทุกเช้าวัน นั่นแปลว่าเธอยังมีโอกาสให้เริ่มต้นใหม่เสมอ",
                     "สร้างพลังบวกให้ตัวเองเสมอ มีทัศนคติที่ดี สิ่งเหล่านี้จะพาเธอไปเจอแต่สิ่งดีๆ",
                     " คาดหวังได้แต่หากผิดหวัง แค่ยอมรับและเดินหน้าต่อไปอย่าลืมยิ้มให้ตัวเอง",
                     " ไม่ใช่ทุกวันที่จะดี แต่ก็ไม่ใช่ทุกวันที่จะแย่",
@@ -327,43 +319,28 @@
                       "ความเข้มแข็งไม่ได้หมายถึงการไม่ร้องไห้ แต่คือการที่เธอลุกขึ้นสูอีกได้แม้จะร้องไห้ไปแล้วก็ตาม",
                      "ไม่ต้องแบกทุกอย่างในชีวิต หรือรู้สึกผิดตลอดไปก็ได้ ทุกอย่างเข้ามาให้เราเรียนรู้ พลาดแล้วก็เติบโตเพราะนี้ก็เป็นครั้งแรกที่เรามีชีวิตเหมือนกัน",
                      "การพักผ่อนคือส่วนหนึ่งของความสำเร็จในการเรียน ไม่ต้องรู้สึกผิดที่จะนอนหรือฟังเพลงที่ชอบสักเพลงนะ",
-                     "ถ้าเราไม่หลงทางเลยเราก็คงไม่เจอสิ่งที่เราอยากทำ เราก็คงทำอะไรเดิม ๆ เรื่อย ๆ ไปวัน ๆ เพราะฉะนั้นวันนี้ถ้ารู้สึกหลงทางอยู่อย่าเพิ่งยอมแพ้นะ",
-                     "เธอกำลังรับมือสถานการณ์ตอนนี้ได้ดีกว่าเมื่อก่อนเยอะเลยนะ เก่งขึ้นมากขนาดนี้ อย่าลืมโอบกอดตัวเองนะ",
-                    "ดอกไม้แต่ละชนิดผลิบานตามฤดูของมันเอง ตอนนี้อาจยังไม่ถึงช่วงเวลาของคุณอาจสายไปหน่อย เมื่อเทียบกับคนอื่น แต่ถ้าฤดูของคุณมาถึงจังหวะนั้น จะเป็นจุดเริ่มต้นที่ดี",
-            ]
-                const randomPrediction = predictionText[Math.floor(Math.random() * predictionText.length)];
-        const predictionContainer = document.getElementById("predictionContainer");
-        const predictionTextElement = document.getElementById("predictionText");
+                     "ถ้าเราไม่หลงทางเลยเราก็คงไม่เจอสิ่งที่เราอยากทำ เราก็คงทำอะไรเดิม ๆ เรื่อย ๆ ไปวัน ๆ เพราะฉะนั้นวันนี้ทุกสิ่งทุกอย่างจะพาเธอไปสู่เส้นทางที่ดีกว่า",
+                ];
 
-        predictionTextElement.textContent = randomPrediction;
-        predictionContainer.style.opacity = 1;
+                let randomPrediction = predictionText[Math.floor(Math.random() * predictionText.length)];
 
-       // เปลี่ยนหน้าไปที่ฟอร์มการประเมินทันทีหลังจากแสดงคำทำนาย
-       setTimeout(() => {
-            window.location.href = "ฟอร์มการประเมิน.html"; // URL ของหน้าถัดไป
-        }, 5000); // รอ 5 วินาทีหลังจากแสดงคำทำนายแล้วค่อยเปลี่ยนหน้า
-    }, 1000);
-}
+                const predictionElement = document.getElementById("predictionText");
+                predictionElement.textContent = randomPrediction;
 
-        function createStars() {
-    const starContainer = document.querySelector('.star-container');
-    for (let i = 0; i < 100; i++) {
-        const star = document.createElement('div');
-        star.classList.add('star');
-        const size = Math.random() * 3 + 1; // ขนาดของดาว
-        star.style.width = size + 'px';
-        star.style.height = size + 'px';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.animationDuration = Math.random() * 2 + 2 + 's';
-        star.style.animationDelay = Math.random() * 2 + 's';
-        starContainer.appendChild(star);
-    }
-}
+                const predictionContainer = document.getElementById("predictionContainer");
+                predictionContainer.style.opacity = 1;
 
-createStars();  // เรียกฟังก์ชันแยกต่างหากเพื่อสร้างดาว
+                setTimeout(() => {
+                    predictionContainer.style.opacity = 0;
+                }, 5000);
 
+                setTimeout(() => {
+                    window.location.href = "ฟอร์มการประเมิน.html"; // เปลี่ยนที่อยู่ที่คุณต้องการจะพาไป
+                }, 6000);
+            }, 500);
+        }
 
+        createStars();
         showMessages();
         showCard();
     </script>
